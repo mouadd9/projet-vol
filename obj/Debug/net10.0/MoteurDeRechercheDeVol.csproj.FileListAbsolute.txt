@@ -172,3 +172,4 @@ C:\Users\benca\OneDrive\Desktop\MoteurDeRechercheDeVol\obj\Debug\net10.0\refint\
 C:\Users\benca\OneDrive\Desktop\MoteurDeRechercheDeVol\obj\Debug\net10.0\MoteurDeRechercheDeVol.pdb
 C:\Users\benca\OneDrive\Desktop\MoteurDeRechercheDeVol\obj\Debug\net10.0\MoteurDeRechercheDeVol.genruntimeconfig.cache
 C:\Users\benca\OneDrive\Desktop\MoteurDeRechercheDeVol\obj\Debug\net10.0\ref\MoteurDeRechercheDeVol.dll
+C:\Users\benca\OneDrive\Desktop\MoteurDeRechercheDeVol\obj\Debug\net10.0\MoteurDeRechercheDeVol.sourcelink.json
