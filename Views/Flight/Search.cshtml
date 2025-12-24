@@ -1,0 +1,184 @@
+@model MoteurDeRechercheDeVol.ViewModels.FlightSearchViewModel
+
+@{
+    ViewData["Title"] = "Search Flights";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="fas fa-search"></i> Search Flights</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Search" method="post" id="searchForm">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <!-- Trip Type -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Trip Type</label>
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="TripType" id="roundTrip" 
+                                       value="round-trip" asp-for="TripType" checked>
+                                <label class="btn btn-outline-primary" for="roundTrip">
+                                    <i class="fas fa-exchange-alt"></i> Round Trip
+                                </label>
+
+                                <input type="radio" class="btn-check" name="TripType" id="oneWay" 
+                                       value="one-way" asp-for="TripType">
+                                <label class="btn btn-outline-primary" for="oneWay">
+                                    <i class="fas fa-arrow-right"></i> One Way
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Cities Row -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="DepartureCity" class="form-label fw-bold">From</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-plane-departure"></i></span>
+                                    <input asp-for="DepartureCity" class="form-control" 
+                                           placeholder="Departure city" id="departureCity" />
+                                    <input asp-for="DepartureCityCode" type="hidden" id="departureCityCode" />
+                                </div>
+                                <span asp-validation-for="DepartureCity" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="ArrivalCity" class="form-label fw-bold">To</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-plane-arrival"></i></span>
+                                    <input asp-for="ArrivalCity" class="form-control" 
+                                           placeholder="Arrival city" id="arrivalCity" />
+                                    <input asp-for="ArrivalCityCode" type="hidden" id="arrivalCityCode" />
+                                </div>
+                                <span asp-validation-for="ArrivalCity" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Dates Row -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="DepartureDate" class="form-label fw-bold">Departure Date</label>
+                                <input asp-for="DepartureDate" type="date" class="form-control" 
+                                       min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                                <span asp-validation-for="DepartureDate" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6" id="returnDateDiv">
+                                <label asp-for="ReturnDate" class="form-label fw-bold">Return Date</label>
+                                <input asp-for="ReturnDate" type="date" class="form-control" 
+                                       min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                                <span asp-validation-for="ReturnDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Passengers and Class -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="NumberOfPassengers" class="form-label fw-bold">Passengers</label>
+                                <select asp-for="NumberOfPassengers" class="form-select">
+                                    @for (int i = 1; i <= 9; i++)
+                                    {
+                                        <option value="@i">@i @(i == 1 ? "Passenger" : "Passengers")</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="ClassType" class="form-label fw-bold">Class</label>
+                                <select asp-for="ClassType" class="form-select">
+                                    <option value="ECONOMY">Economy</option>
+                                    <option value="PREMIUM_ECONOMY">Premium Economy</option>
+                                    <option value="BUSINESS">Business</option>
+                                    <option value="FIRST">First Class</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-search"></i> Search Flights
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Autocomplete for departure city
+            $("#departureCity").autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "/api/cities",
+                        data: { term: request.term },
+                        success: function(data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function(event, ui) {
+                    $("#departureCityCode").val(ui.item.code);
+                }
+            });
+
+            // Autocomplete for arrival city
+            $("#arrivalCity").autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "/api/cities",
+                        data: { term: request.term },
+                        success: function(data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function(event, ui) {
+                    $("#arrivalCityCode").val(ui.item.code);
+                }
+            });
+
+            // Toggle return date based on trip type
+            $('input[name="TripType"]').change(function() {
+                if ($(this).val() === 'one-way') {
+                    $('#returnDateDiv').hide();
+                    $('input[name="ReturnDate"]').removeAttr('required');
+                } else {
+                    $('#returnDateDiv').show();
+                    $('input[name="ReturnDate"]').attr('required', 'required');
+                }
+            });
+
+            // Initialize visibility
+            if ($('input[name="TripType"]:checked').val() === 'one-way') {
+                $('#returnDateDiv').hide();
+            }
+
+            // Show loading spinner on submit
+            $('#searchForm').submit(function() {
+                if ($(this).valid()) {
+                    var btn = $(this).find('button[type="submit"]');
+                    var originalText = btn.html();
+                    btn.prop('disabled', true);
+                    btn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Searching...');
+                    
+                    // Re-enable after 30 seconds timeout in case of error (fallback)
+                    setTimeout(function() {
+                        btn.prop('disabled', false);
+                        btn.html(originalText);
+                    }, 30000);
+                }
+            });
+        });
+    </script>
+}
