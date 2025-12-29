@@ -21,5 +21,8 @@ namespace MoteurDeRechercheDeVol.ViewModels
         public bool? DirectOnly { get; set; }
         public string DepartureTime { get; set; }
         public string ArrivalTime { get; set; }
+        public string Airlines { get; set; }
+        public string DepartureAirport { get; set; }
+        public string ArrivalAirport { get; set; }
     }
 }

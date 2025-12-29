@@ -64,21 +64,37 @@
         });
     });
 
-    // Navbar scroll effect
+    // Navbar hide on scroll down, show on scroll up
     let lastScroll = 0;
+    let scrollThreshold = 100;
     const navbar = document.querySelector('.navbar');
     
     window.addEventListener('scroll', () => {
         const currentScroll = window.pageYOffset;
         
+        // Update shadow
         if (currentScroll > 50) {
             navbar.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.08)';
         } else {
             navbar.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.04)';
         }
         
+        // Hide/show navbar based on scroll direction
+        if (currentScroll > scrollThreshold) {
+            if (currentScroll > lastScroll) {
+                // Scrolling down - hide navbar
+                navbar.classList.add('navbar-hidden');
+            } else {
+                // Scrolling up - show navbar
+                navbar.classList.remove('navbar-hidden');
+            }
+        } else {
+            // Near top - always show navbar
+            navbar.classList.remove('navbar-hidden');
+        }
+        
         lastScroll = currentScroll;
-    });
+    }, { passive: true });
 
     // Form input focus animations
     document.querySelectorAll('.form-control, .form-select').forEach(input => {
@@ -103,4 +119,105 @@
             }
         });
     });
+
+    // Mobile-specific enhancements
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+    if (isMobile || isTouchDevice) {
+        // Prevent double-tap zoom on buttons and cards
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+
+        // Add touch feedback to interactive elements
+        document.querySelectorAll('.btn, .card, .page-link, .form-control, .form-select').forEach(element => {
+            element.addEventListener('touchstart', function() {
+                this.style.opacity = '0.7';
+            }, { passive: true });
+            
+            element.addEventListener('touchend', function() {
+                setTimeout(() => {
+                    this.style.opacity = '';
+                }, 150);
+            }, { passive: true });
+        });
+
+        // Improve autocomplete for mobile
+        document.querySelectorAll('.ui-autocomplete').forEach(autocomplete => {
+            autocomplete.style.position = 'fixed';
+            autocomplete.style.maxWidth = '90vw';
+        });
+
+        // Optimize scroll performance on mobile
+        let ticking = false;
+        window.addEventListener('scroll', function() {
+            if (!ticking) {
+                window.requestAnimationFrame(function() {
+                    // Scroll handling code here
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }, { passive: true });
+
+        // Prevent pull-to-refresh on mobile (iOS Safari)
+        let touchStartY = 0;
+        document.addEventListener('touchstart', function(e) {
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+
+        document.addEventListener('touchmove', function(e) {
+            if (window.scrollY === 0 && e.touches[0].clientY > touchStartY) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // Add safe area padding for notched devices
+        const setSafeAreaPadding = () => {
+            const safeAreaTop = getComputedStyle(document.documentElement).getPropertyValue('env(safe-area-inset-top)');
+            const safeAreaBottom = getComputedStyle(document.documentElement).getPropertyValue('env(safe-area-inset-bottom)');
+            
+            if (safeAreaTop || safeAreaBottom) {
+                document.documentElement.style.setProperty('--safe-area-top', safeAreaTop || '0px');
+                document.documentElement.style.setProperty('--safe-area-bottom', safeAreaBottom || '0px');
+            }
+        };
+
+        setSafeAreaPadding();
+        window.addEventListener('resize', setSafeAreaPadding);
+        window.addEventListener('orientationchange', setSafeAreaPadding);
+
+        // Improve form input experience on mobile
+        document.querySelectorAll('input[type="date"], input[type="text"], select').forEach(input => {
+            input.addEventListener('focus', function() {
+                // Scroll input into view on mobile
+                setTimeout(() => {
+                    this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+            });
+        });
+
+        // Optimize card animations for mobile (reduce motion if needed)
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            document.querySelectorAll('.card, .flight-card').forEach(card => {
+                card.style.transition = 'none';
+            });
+        }
+    }
+
+    // Viewport height fix for mobile browsers
+    const setViewportHeight = () => {
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
+
+    setViewportHeight();
+    window.addEventListener('resize', setViewportHeight);
+    window.addEventListener('orientationchange', setViewportHeight);
 })();

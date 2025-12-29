@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="theme-color" content="#007AFF" />
     <title>@ViewData["Title"] - Flight Search</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
@@ -15,10 +18,18 @@
             <a class="navbar-brand" href="/">
                 <i class="fas fa-plane"></i> FlightSearch
             </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" asp-controller="Flight" asp-action="Search">
+                    <i class="fas fa-search me-1"></i>Search
+                </a>
+                <a class="nav-link" asp-controller="Flight" asp-action="History">
+                    <i class="fas fa-history me-1"></i>History
+                </a>
+            </div>
         </div>
     </nav>
 
-    <main role="main" class="pb-3" style="padding-top: 80px;">
+    <main role="main" class="pb-3 mobile-main" style="padding-top: 80px;">
         @RenderBody()
     </main>
 
@@ -28,9 +39,70 @@
         </div>
     </footer>
 
+    <!-- Flight Details Modal -->
+    <div class="modal fade" id="flightDetailsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content premium-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-info-circle me-2"></i>Flight Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="flightDetailsContent">
+                    <div class="text-center py-4">
+                        <div class="premium-spinner" style="width: 40px; height: 40px; margin: 0 auto;"></div>
+                        <p class="text-muted mt-3">Loading flight details...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Price Alert Modal -->
+    <div class="modal fade" id="priceAlertModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content premium-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-bell me-2"></i>Set Price Alert</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="priceAlertForm">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Email Address</label>
+                            <input type="email" class="form-control" name="email" required placeholder="your@email.com">
+                            <small class="text-muted">We'll send you an email when the price drops</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Target Price</label>
+                            <div class="input-group">
+                                <span class="input-group-text" id="alertCurrencyDisplay">USD</span>
+                                <input type="number" class="form-control" name="targetPrice" required step="0.01" min="0" placeholder="0.00">
+                            </div>
+                            <small class="text-muted">We'll notify you when the price drops below this amount</small>
+                        </div>
+                        <div class="alert alert-info mb-3">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Route:</strong> <span id="alertRouteDisplay"></span><br>
+                            <strong>Current Price:</strong> <span id="alertCurrentPriceDisplay"></span>
+                        </div>
+                        <input type="hidden" name="departureCity" id="alertDepartureCity">
+                        <input type="hidden" name="arrivalCity" id="alertArrivalCity">
+                        <input type="hidden" name="departureDate" id="alertDepartureDate">
+                        <input type="hidden" name="returnDate" id="alertReturnDate">
+                        <input type="hidden" name="currency" id="alertCurrency">
+                        <button type="submit" class="btn btn-primary w-100 btn-lg">
+                            <i class="fas fa-bell me-2"></i>Create Price Alert
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

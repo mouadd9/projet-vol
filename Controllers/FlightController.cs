@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using MoteurDeRechercheDeVol.Data;
 using MoteurDeRechercheDeVol.Models;
 using MoteurDeRechercheDeVol.Services;
@@ -125,7 +127,8 @@ namespace MoteurDeRechercheDeVol.Controllers
         }
 
         [HttpPost]
-        public IActionResult FilterAndSort(string sortBy, bool? directOnly, string departureTime, string arrivalTime, int page = 1)
+        public IActionResult FilterAndSort(string sortBy, bool? directOnly, string departureTime, string arrivalTime, 
+            string airlines, string departureAirport, string arrivalAirport, int page = 1)
         {
             var searchCriteriaJson = HttpContext.Session.GetString("SearchCriteria");
             var allFlightsJson = HttpContext.Session.GetString("AllFlights");
@@ -155,6 +158,39 @@ namespace MoteurDeRechercheDeVol.Controllers
             if (!string.IsNullOrEmpty(arrivalTime))
             {
                 filteredFlights = FilterByArrivalTime(filteredFlights, arrivalTime);
+            }
+
+            // Advanced filters
+            if (!string.IsNullOrEmpty(airlines))
+            {
+                var airlineCode = airlines.Trim().ToUpper();
+                filteredFlights = filteredFlights.Where(f => 
+                    f.OutboundSegments.Any(s => (s.AirlineName?.ToUpper() ?? "") == airlineCode) ||
+                    (f.ReturnSegments != null && f.ReturnSegments.Any(s => (s.AirlineName?.ToUpper() ?? "") == airlineCode))
+                );
+            }
+
+            if (!string.IsNullOrEmpty(departureAirport))
+            {
+                var airportCode = departureAirport.Trim().ToUpper();
+                filteredFlights = filteredFlights.Where(f => 
+                    f.OutboundSegments.Any(s => 
+                        s.DepartureAirport?.ToUpper() == airportCode
+                    )
+                );
+            }
+
+            if (!string.IsNullOrEmpty(arrivalAirport))
+            {
+                var airportCode = arrivalAirport.Trim().ToUpper();
+                filteredFlights = filteredFlights.Where(f => 
+                    f.OutboundSegments.Any(s => 
+                        s.ArrivalAirport?.ToUpper() == airportCode
+                    ) ||
+                    (f.ReturnSegments != null && f.ReturnSegments.Any(s => 
+                        s.ArrivalAirport?.ToUpper() == airportCode
+                    ))
+                );
             }
 
             // Apply sorting
@@ -190,7 +226,10 @@ namespace MoteurDeRechercheDeVol.Controllers
                     SortBy = sortBy,
                     DirectOnly = directOnly,
                     DepartureTime = departureTime,
-                    ArrivalTime = arrivalTime
+                    ArrivalTime = arrivalTime,
+                    Airlines = airlines,
+                    DepartureAirport = departureAirport,
+                    ArrivalAirport = arrivalAirport
                 }
             };
 
@@ -242,6 +281,135 @@ namespace MoteurDeRechercheDeVol.Controllers
                                                f.OutboundSegments.Last().ArrivalTime.Hour < 6),
                 _ => flights
             };
+        }
+
+        [HttpPost]
+        public IActionResult SelectFlight(string flightId, string currency, string price)
+        {
+            // Store selected flight in session
+            HttpContext.Session.SetString("SelectedFlightId", flightId ?? "");
+            HttpContext.Session.SetString("SelectedFlightPrice", price ?? "");
+            HttpContext.Session.SetString("SelectedFlightCurrency", currency ?? "");
+            
+            return Json(new { success = true, message = "Flight selected successfully" });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> History()
+        {
+            try
+            {
+                var history = await _context.SearchHistories
+                    .OrderByDescending(h => h.SearchDate)
+                    .Take(50)
+                    .ToListAsync();
+                
+                return View(history);
+            }
+            catch
+            {
+                return View(new List<SearchHistory>());
+            }
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> CreatePriceAlert(string departureCity, string arrivalCity, 
+            DateTime departureDate, DateTime? returnDate, decimal targetPrice, string currency, string email)
+        {
+            try
+            {
+                var alert = new PriceAlert
+                {
+                    DepartureCity = departureCity,
+                    ArrivalCity = arrivalCity,
+                    DepartureDate = departureDate,
+                    ReturnDate = returnDate,
+                    TargetPrice = targetPrice,
+                    Currency = currency,
+                    Email = email,
+                    IsActive = true,
+                    CreatedDate = DateTime.Now
+                };
+
+                _context.PriceAlerts.Add(alert);
+                await _context.SaveChangesAsync();
+
+                return Json(new { success = true, message = "Price alert created successfully" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetFlightDetails(string flightId)
+        {
+            try
+            {
+                var allFlightsJson = HttpContext.Session.GetString("AllFlights");
+                if (string.IsNullOrEmpty(allFlightsJson))
+                {
+                    return Json(new { success = false, message = "Flight data not found" });
+                }
+
+                var allFlights = JsonConvert.DeserializeObject<List<FlightOffer>>(allFlightsJson);
+                var flight = allFlights?.FirstOrDefault(f => f.Id == flightId);
+
+                if (flight == null)
+                {
+                    return Json(new { success = false, message = "Flight not found" });
+                }
+
+                return Json(new { success = true, flight = flight });
+            }
+            catch
+            {
+                return Json(new { success = false, message = "Error retrieving flight details" });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetFilterOptions()
+        {
+            try
+            {
+                var allFlightsJson = HttpContext.Session.GetString("AllFlights");
+                if (string.IsNullOrEmpty(allFlightsJson))
+                {
+                    return Json(new { success = false, message = "No flight data available" });
+                }
+
+                var allFlights = JsonConvert.DeserializeObject<List<FlightOffer>>(allFlightsJson);
+                
+                // Get unique airlines
+                var airlines = allFlights
+                    .SelectMany(f => f.OutboundSegments.Select(s => s.AirlineName))
+                    .Concat(allFlights.Where(f => f.ReturnSegments != null)
+                        .SelectMany(f => f.ReturnSegments.Select(s => s.AirlineName)))
+                    .Where(a => !string.IsNullOrEmpty(a))
+                    .Distinct()
+                    .OrderBy(a => a)
+                    .ToList();
+
+                // Get unique airports
+                var airports = allFlights
+                    .SelectMany(f => f.OutboundSegments.Select(s => new { s.DepartureAirport, s.ArrivalAirport }))
+                    .Concat(allFlights.Where(f => f.ReturnSegments != null)
+                        .SelectMany(f => f.ReturnSegments.Select(s => new { s.DepartureAirport, s.ArrivalAirport })))
+                    .SelectMany(a => new[] { a.DepartureAirport, a.ArrivalAirport })
+                    .Where(a => !string.IsNullOrEmpty(a))
+                    .Distinct()
+                    .OrderBy(a => a)
+                    .ToList();
+
+                return Json(new { success = true, airlines = airlines, airports = airports });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
         }
     }
 }

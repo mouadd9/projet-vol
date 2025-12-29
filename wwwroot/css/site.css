@@ -44,7 +44,7 @@ body {
     padding: 0;
 }
 
-/* Premium Navbar with Glass Effect */
+/* Premium Navbar with Glass Effect - Hide on Scroll */
 .navbar {
     background: rgba(255, 255, 255, 0.8) !important;
     backdrop-filter: var(--blur-md);
@@ -52,7 +52,15 @@ body {
     border-bottom: 1px solid var(--border-color);
     box-shadow: var(--shadow-sm);
     padding: 1rem 0;
-    transition: all var(--transition-base);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.navbar.navbar-hidden {
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
 }
 
 .navbar-brand {
@@ -104,6 +112,11 @@ body {
 
 .card-body {
     padding: 2rem;
+}
+
+/* Compact card body for flight cards - Pixel Perfect Apple Style */
+.flight-card .card-body {
+    padding: 1rem 1.25rem;
 }
 
 /* Premium Form Controls */
@@ -244,21 +257,337 @@ body {
     border-color: var(--primary-color);
 }
 
-/* Premium Flight Cards */
+/* Premium Flight Cards - Pixel Perfect Apple Design */
 .flight-card {
-    background: var(--bg-glass);
+    background: rgba(255, 255, 255, 0.85);
     backdrop-filter: var(--blur-md);
     -webkit-backdrop-filter: var(--blur-md);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    transition: all var(--transition-base);
+    border: 0.5px solid rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
+    position: relative;
+    margin-bottom: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.flight-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    opacity: 0;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .flight-card:hover {
-    transform: translateY(-4px) scale(1.01);
-    box-shadow: var(--shadow-xl);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 122, 255, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
     border-color: rgba(0, 122, 255, 0.3);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.flight-card:hover::before {
+    opacity: 1;
+}
+
+/* Flight Section - Compact */
+.flight-section {
+    margin-bottom: 0.75rem;
+}
+
+.flight-section:last-child {
+    margin-bottom: 0;
+}
+
+.flight-header {
+    display: flex;
+    gap: 0.375rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 0.625rem;
+}
+
+/* Flight Badges - Pixel Perfect */
+.flight-badge-outbound,
+.flight-badge-return,
+.flight-badge-direct,
+.flight-badge-stops {
+    padding: 0.25rem 0.625rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.1px;
+    display: inline-flex;
+    align-items: center;
+    line-height: 1.2;
+}
+
+.flight-badge-outbound {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+}
+
+.flight-badge-return {
+    background: linear-gradient(135deg, var(--secondary-color) 0%, #4A48C4 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(88, 86, 214, 0.3);
+}
+
+.flight-badge-direct {
+    background: linear-gradient(135deg, var(--success-color) 0%, #30B04F 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(52, 199, 89, 0.3);
+}
+
+.flight-badge-stops {
+    background: linear-gradient(135deg, var(--warning-color) 0%, #E6850E 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(255, 149, 0, 0.3);
+}
+
+/* Flight Segments Container - Compact */
+.flight-segments {
+    margin-top: 0.5rem;
+}
+
+.flight-segment-item {
+    position: relative;
+    margin-bottom: 0.5rem;
+}
+
+.flight-segment-item:last-child {
+    margin-bottom: 0;
+}
+
+/* Flight Route Layout - Compact Apple Style */
+.flight-route {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    background: rgba(248, 249, 250, 0.6);
+    border-radius: 8px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 0.5px solid rgba(0, 0, 0, 0.04);
+}
+
+.flight-segment-item:hover .flight-route {
+    background: rgba(248, 249, 250, 0.9);
+    transform: translateX(2px);
+    border-color: rgba(0, 122, 255, 0.15);
+}
+
+/* Flight Time Blocks - Pixel Perfect */
+.flight-time-block {
+    flex: 0 0 auto;
+    min-width: 70px;
+}
+
+.flight-time {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+    letter-spacing: -0.3px;
+}
+
+.flight-airport {
+    font-size: 0.6875rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-top: 0.1875rem;
+}
+
+/* Flight Connection (Middle Section) - Compact */
+.flight-connection {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0 0.75rem;
+}
+
+.flight-duration {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.flight-line {
+    position: relative;
+    width: 100%;
+    height: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flight-line-path {
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    border-radius: 2px;
+    opacity: 0.3;
+}
+
+.flight-plane-icon {
+    position: relative;
+    z-index: 1;
+    color: var(--primary-color);
+    font-size: 0.9rem;
+    background: var(--bg-primary);
+    padding: 0.25rem 0.5rem;
+    border-radius: 50%;
+    animation: planeMove 3s ease-in-out infinite;
+}
+
+@keyframes planeMove {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(10px); }
+}
+
+.flight-airline {
+    font-size: 0.6875rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* Flight Layover - Compact */
+.flight-layover {
+    font-size: 0.6875rem;
+    color: var(--text-secondary);
+    padding: 0.375rem 0.625rem;
+    background: rgba(255, 149, 0, 0.08);
+    border-left: 2px solid var(--warning-color);
+    border-radius: 0 6px 6px 0;
+    margin-top: 0.375rem;
+    margin-left: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.flight-layover i {
+    font-size: 0.5rem;
+    color: var(--warning-color);
+}
+
+/* Flight Divider - Compact */
+.flight-divider {
+    height: 0.5px;
+    background: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.1) 50%, transparent 100%);
+    position: relative;
+    margin: 0.75rem 0;
+}
+
+.flight-divider::before {
+    content: '↕';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--bg-primary);
+    padding: 0 0.375rem;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+}
+
+/* Flight Price Section - Compact */
+.flight-price-section {
+    border-left: 1px solid rgba(0, 0, 0, 0.08);
+    padding-left: 1.25rem;
+}
+
+.flight-price-card {
+    background: linear-gradient(135deg, rgba(0, 122, 255, 0.04) 0%, rgba(88, 86, 214, 0.04) 100%);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    text-align: center;
+    border: 0.5px solid rgba(0, 122, 255, 0.08);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.flight-card:hover .flight-price-card {
+    background: linear-gradient(135deg, rgba(0, 122, 255, 0.1) 0%, rgba(88, 86, 214, 0.1) 100%);
+    border-color: rgba(0, 122, 255, 0.2);
+    transform: scale(1.02);
+}
+
+.flight-price-amount {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.375rem;
+    margin-bottom: 0.75rem;
+}
+
+.flight-currency {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.flight-price {
+    font-size: 1.75rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
+    line-height: 1;
+}
+
+.flight-price-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    margin-bottom: 0.75rem;
+}
+
+.flight-price-detail-item {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+}
+
+.flight-price-detail-item i {
+    color: var(--primary-color);
+    font-size: 0.75rem;
+}
+
+.btn-select-flight {
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    text-transform: uppercase;
+    font-size: 0.8125rem;
+    padding: 0.75rem 1.25rem;
+    box-shadow: 0 2px 8px rgba(0, 122, 255, 0.25);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 8px;
+}
+
+.btn-select-flight:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 122, 255, 0.4);
+}
+
+.btn-select-flight:active {
+    transform: translateY(0);
 }
 
 /* Premium Badges */
@@ -427,6 +756,11 @@ main {
     animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Disable slide-in animation for sticky-filters to prevent glitching */
+.sticky-filters.slide-in {
+    animation: none !important;
+}
+
 /* Premium Scrollbar */
 ::-webkit-scrollbar {
     width: 10px;
@@ -448,29 +782,765 @@ main {
     background: rgba(0, 0, 0, 0.3);
 }
 
-/* Premium Responsive */
+/* Filters Sidebar - Desktop Only (No Sticky) */
+@media (min-width: 992px) {
+    .sticky-filters {
+        position: relative !important;
+        max-height: none !important;
+        overflow: visible !important;
+        z-index: 1;
+        /* Remove all transforms and will-change to prevent glitching */
+        transform: none !important;
+        will-change: auto !important;
+        /* Disable slide-in animation */
+        animation: none !important;
+    }
+    
+    /* Disable all hover effects and transitions inside filters */
+    .sticky-filters .card {
+        position: relative !important;
+        transform: none !important;
+        transition: none !important;
+        will-change: auto !important;
+        animation: none !important;
+        /* Override any general card hover effects */
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+    }
+    
+    .sticky-filters .card:hover {
+        transform: none !important;
+        box-shadow: var(--shadow-md) !important;
+        border-color: var(--border-color) !important;
+        /* Ensure no position changes */
+        top: 0 !important;
+        left: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+    
+    /* Disable ALL transitions, transforms, and hover effects inside filters */
+    .sticky-filters * {
+        transition: none !important;
+        transform: none !important;
+        will-change: auto !important;
+        backface-visibility: visible !important;
+        -webkit-backface-visibility: visible !important;
+    }
+    
+    /* Specific overrides for form elements */
+    .sticky-filters .form-control,
+    .sticky-filters .form-select,
+    .sticky-filters .form-check-input,
+    .sticky-filters .btn,
+    .sticky-filters .input-group-text,
+    .sticky-filters .input-group,
+    .sticky-filters label,
+    .sticky-filters small {
+        transition: none !important;
+        transform: none !important;
+    }
+    
+    .sticky-filters .form-control:hover,
+    .sticky-filters .form-select:hover,
+    .sticky-filters .btn:hover {
+        transform: none !important;
+    }
+    
+    .sticky-filters .form-control:focus,
+    .sticky-filters .form-select:focus,
+    .sticky-filters .form-check-input:focus {
+        transform: none !important;
+        box-shadow: 0 0 0 0.2rem rgba(0, 122, 255, 0.25) !important;
+        outline: none !important;
+    }
+    
+    /* Disable button hover effects */
+    .sticky-filters .btn-primary:hover,
+    .sticky-filters .btn-outline-primary:hover,
+    .sticky-filters .btn-secondary:hover {
+        transform: none !important;
+    }
+    
+    /* Ensure card body and header don't move */
+    .sticky-filters .card-body,
+    .sticky-filters .card-header {
+        transform: none !important;
+        transition: none !important;
+    }
+}
+
+/* Flight Navigation Buttons - Desktop Only */
+@media (min-width: 992px) {
+    .flight-navigation-buttons {
+        position: fixed;
+        right: 2rem;
+        bottom: 2rem;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        opacity: 0.7;
+        transition: opacity var(--transition-base);
+    }
+    
+    .flight-navigation-buttons:hover {
+        opacity: 1;
+    }
+    
+    .btn-nav-flight {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: var(--blur-md);
+        -webkit-backdrop-filter: var(--blur-md);
+        border: 2px solid var(--primary-color);
+        box-shadow: 0 4px 16px rgba(0, 122, 255, 0.25);
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        font-size: 1.1rem;
+    }
+    
+    .btn-nav-flight:hover {
+        background: var(--primary-color);
+        color: white;
+        transform: scale(1.1);
+        box-shadow: 0 6px 24px rgba(0, 122, 255, 0.4);
+    }
+    
+    .btn-nav-flight:active {
+        transform: scale(0.95);
+    }
+    
+    .btn-nav-flight[style*="opacity: 0.3"] {
+        cursor: not-allowed;
+        opacity: 0.3 !important;
+    }
+    
+    .btn-nav-flight[style*="opacity: 0.3"]:hover {
+        background: rgba(255, 255, 255, 0.95);
+        color: var(--primary-color);
+        transform: scale(1);
+    }
+}
+
+@media (max-width: 991px) {
+    .flight-navigation-buttons {
+        display: none !important;
+    }
+}
+
+/* Premium Mobile App-like Responsive Design */
 @media (max-width: 768px) {
-    .card-body {
-        padding: 1.5rem;
+    /* Mobile Body - Full Screen App Feel */
+    body {
+        background: var(--bg-primary);
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-y: contain;
     }
     
-    .flight-card .col-md-4 {
-        border-top: 1px solid var(--border-color);
-        border-left: none !important;
-        margin-top: 1rem;
-        padding-top: 1rem;
-    }
-    
-    main {
-        padding: 1rem 0;
+    /* Mobile Navbar - iOS/Android Style */
+    .navbar {
+        padding: 0.75rem 1rem;
+        height: 60px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
     
     .navbar-brand {
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+    
+    /* Mobile Main Content */
+    main {
+        padding: 0.5rem 0;
+        padding-top: 70px !important;
+        padding-bottom: 80px;
+        min-height: calc(100vh - 60px);
+    }
+    
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    /* Mobile Cards - Full Width, Native Feel */
+    .card {
+        border-radius: var(--radius-lg);
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        border: none;
+    }
+    
+    .card-header {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+    
+    .card-body {
+        padding: 1.25rem;
+    }
+    
+    /* Mobile Forms - Touch-Friendly */
+    .form-control,
+    .form-select {
+        padding: 1rem;
+        font-size: 1rem;
+        border-radius: var(--radius-md);
+        min-height: 48px; /* Touch target size */
+    }
+    
+    .form-label {
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+    
+    .input-group-text {
+        padding: 1rem;
+        min-width: 48px;
+    }
+    
+    /* Mobile Buttons - Larger Touch Targets */
+    .btn {
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
+        min-height: 48px;
+        border-radius: var(--radius-md);
+        font-weight: 600;
+    }
+    
+    .btn-lg {
+        padding: 1.25rem 2rem;
+        font-size: 1.1rem;
+        min-height: 56px;
+    }
+    
+    .btn-group {
+        width: 100%;
+    }
+    
+    .btn-group .btn {
+        flex: 1;
+        padding: 0.875rem 1rem;
+    }
+    
+    /* Hide navigation buttons on mobile */
+    .flight-navigation-buttons {
+        display: none;
+    }
+    
+    /* Mobile Flight Cards - Very Compact */
+    .flight-card {
+        margin-bottom: 0.75rem;
+        border-radius: var(--radius-md);
+    }
+    
+    .flight-card .card-body {
+        padding: 0.875rem !important;
+    }
+    
+    .flight-card .col-md-4,
+    .flight-card .col-md-8 {
+        width: 100%;
+        padding: 0;
+    }
+    
+    .flight-price-section {
+        border-left: none;
+        border-top: 1px solid var(--border-color);
+        padding-left: 0;
+        padding-top: 0.75rem;
+        margin-top: 0.75rem;
+    }
+    
+    .flight-card .row {
+        margin: 0;
+    }
+    
+    .flight-card .row > div {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    /* Mobile Flight Header - Smaller */
+    .flight-header {
+        margin-bottom: 0.5rem;
+        gap: 0.375rem;
+    }
+    
+    .flight-badge-outbound,
+    .flight-badge-return,
+    .flight-badge-direct,
+    .flight-badge-stops {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.7rem;
+    }
+    
+    .flight-badge-outbound i,
+    .flight-badge-return i,
+    .flight-badge-direct i,
+    .flight-badge-stops i {
+        font-size: 0.65rem;
+    }
+    
+    /* Mobile Flight Segments - Very Compact */
+    .flight-segments {
+        margin-top: 0.5rem;
+    }
+    
+    .flight-segment-item {
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Mobile Flight Route */
+    .flight-route {
+        flex-direction: row;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        background: rgba(255, 255, 255, 0.3);
+    }
+    
+    .flight-time-block {
+        min-width: 60px;
+        flex: 0 0 auto;
+    }
+    
+    .flight-time {
+        font-size: 0.95rem;
+    }
+    
+    .flight-airport {
+        font-size: 0.65rem;
+        margin-top: 0.125rem;
+    }
+    
+    .flight-connection {
+        flex: 1;
+        padding: 0 0.5rem;
+        gap: 0.25rem;
+    }
+    
+    .flight-duration {
+        font-size: 0.7rem;
+    }
+    
+    .flight-line {
+        height: 1.5px;
+        margin: 0.25rem 0;
+    }
+    
+    .flight-plane-icon {
+        font-size: 0.75rem;
+        padding: 0.15rem 0.35rem;
+    }
+    
+    .flight-airline {
+        font-size: 0.65rem;
+    }
+    
+    .flight-layover {
+        font-size: 0.6rem;
+        padding: 0.375rem 0.5rem;
+        margin-top: 0.375rem;
+        margin-left: 0.5rem;
+    }
+    
+    .flight-layover i {
+        font-size: 0.4rem;
+    }
+    
+    /* Mobile Flight Divider */
+    .flight-divider {
+        margin: 0.75rem 0;
+        height: 1px;
+    }
+    
+    /* Mobile Price Section - Compact */
+    .flight-price-card {
+        padding: 0.875rem;
+        border-radius: var(--radius-md);
+    }
+    
+    .flight-price-amount {
+        margin-bottom: 0.75rem;
+        gap: 0.375rem;
+    }
+    
+    .flight-currency {
+        font-size: 0.85rem;
+    }
+    
+    .flight-price {
+        font-size: 1.5rem;
+    }
+    
+    .flight-price-details {
+        gap: 0.375rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .flight-price-detail-item {
+        font-size: 0.75rem;
+        gap: 0.375rem;
+    }
+    
+    .flight-price-detail-item i {
+        font-size: 0.65rem;
+    }
+    
+    .btn-select-flight {
+        padding: 0.75rem 1rem;
+        font-size: 0.8rem;
+        margin-top: 0.75rem !important;
+    }
+    
+    /* Mobile Flight Section */
+    .flight-section {
+        margin-bottom: 0.375rem;
+    }
+    
+    /* Mobile Flight Segments - Compact */
+    .flight-segment {
+        padding: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    /* Mobile Badges */
+    .badge {
+        padding: 0.35rem 0.7rem;
+        font-size: 0.75rem;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Mobile Typography */
+    .display-3 {
+        font-size: 2rem;
+        line-height: 1.2;
+    }
+    
+    .display-4 {
+        font-size: 1.75rem;
+    }
+    
+    h1 {
+        font-size: 1.75rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    h3 {
         font-size: 1.25rem;
     }
     
+    h5 {
+        font-size: 1.1rem;
+    }
+    
+    /* Mobile Pagination - Touch-Friendly */
+    .premium-pagination {
+        margin: 1.5rem 0;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .premium-pagination .page-item {
+        margin: 0.25rem;
+    }
+    
+    .premium-pagination .page-link {
+        padding: 0.875rem 1rem;
+        min-width: 48px;
+        min-height: 48px;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Mobile Footer - Hidden or Minimal */
+    .footer {
+        padding: 1rem 0;
+        font-size: 0.8rem;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: var(--blur-md);
+        -webkit-backdrop-filter: var(--blur-md);
+        border-top: 1px solid var(--border-color);
+    }
+    
+    /* Mobile Loading Overlay */
+    .loading-overlay {
+        padding: 1rem;
+    }
+    
+    .loading-content {
+        padding: 2rem 1.5rem;
+        width: 90%;
+        max-width: 320px;
+    }
+    
+    .premium-spinner {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .loading-content h3 {
+        font-size: 1.25rem;
+    }
+    
+    .loading-content p {
+        font-size: 0.9rem;
+    }
+    
+    /* Mobile Filters Sidebar - Full Width */
+    .col-lg-3 {
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Disable sticky on mobile */
+    .sticky-filters {
+        position: relative;
+        top: auto;
+        max-height: none;
+    }
+    
+    /* Mobile Results Count */
+    .mb-3 h5 {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    /* Mobile Price Display */
+    .h3.text-primary {
+        font-size: 1.75rem;
+    }
+    
+    /* Mobile Autocomplete */
+    .ui-autocomplete {
+        max-height: 250px;
+        font-size: 1rem;
+    }
+    
+    .ui-autocomplete .ui-menu-item-wrapper {
+        padding: 1rem;
+        min-height: 48px;
+    }
+    
+    /* Mobile Safe Area Support */
+    @supports (padding: max(0px)) {
+        body {
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+        }
+        
+        .navbar {
+            padding-left: max(1rem, env(safe-area-inset-left));
+            padding-right: max(1rem, env(safe-area-inset-right));
+        }
+        
+        main {
+            padding-bottom: max(80px, env(safe-area-inset-bottom));
+        }
+    }
+    
+    /* Mobile Scroll Behavior */
+    .card,
+    .flight-card {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Mobile Touch Feedback */
+    .btn:active,
+    .card:active,
+    .page-link:active {
+        transform: scale(0.98);
+        transition: transform 0.1s;
+    }
+    
+    /* Mobile Input Focus - Larger */
+    .form-control:focus,
+    .form-select:focus {
+        box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15);
+        transform: none;
+    }
+    
+    /* Hide hover effects on mobile */
+    .card:hover {
+        transform: none;
+    }
+    
+    .btn:hover {
+        transform: none;
+    }
+    
+    .hover-lift:hover {
+        transform: none;
+    }
+}
+
+/* Extra Small Mobile Devices */
+@media (max-width: 480px) {
+    .container {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .card-header {
+        padding: 0.875rem;
+    }
+    
+    .btn {
+        padding: 0.875rem 1.25rem;
+        font-size: 0.95rem;
+    }
+    
+    .btn-lg {
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
+    }
+    
     .display-3 {
-        font-size: 2.5rem;
+        font-size: 1.75rem;
+    }
+    
+    .premium-pagination .page-link {
+        padding: 0.75rem 0.875rem;
+        min-width: 44px;
+        min-height: 44px;
+        font-size: 0.9rem;
+    }
+    
+    .navbar-brand {
+        font-size: 1rem;
+    }
+    
+    .col-lg-9 {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    
+    .col-lg-3 {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    
+    /* Extra Small Mobile - Ultra Compact Flight Cards */
+    .flight-card .card-body {
+        padding: 0.75rem !important;
+    }
+    
+    .flight-route {
+        padding: 0.5rem 0.375rem;
+        gap: 0.375rem;
+    }
+    
+    .flight-time-block {
+        min-width: 55px;
+    }
+    
+    .flight-time {
+        font-size: 0.9rem;
+    }
+    
+    .flight-airport {
+        font-size: 0.6rem;
+    }
+    
+    .flight-connection {
+        padding: 0 0.375rem;
+    }
+    
+    .flight-duration {
+        font-size: 0.65rem;
+    }
+    
+    .flight-airline {
+        font-size: 0.6rem;
+    }
+    
+    .flight-price {
+        font-size: 1.35rem;
+    }
+    
+    .flight-price-card {
+        padding: 0.75rem;
+    }
+    
+    .flight-header {
+        gap: 0.25rem;
+    }
+    
+    .flight-badge-outbound,
+    .flight-badge-return,
+    .flight-badge-direct,
+    .flight-badge-stops {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.65rem;
+    }
+}
+
+/* Mobile Landscape Orientation */
+@media (max-width: 768px) and (orientation: landscape) {
+    .navbar {
+        height: 50px;
+    }
+    
+    main {
+        padding-top: 60px !important;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+}
+
+/* iOS Safari specific fixes */
+@supports (-webkit-touch-callout: none) {
+    @media (max-width: 768px) {
+        body {
+            -webkit-tap-highlight-color: rgba(0, 122, 255, 0.1);
+        }
+        
+        input,
+        textarea,
+        select {
+            font-size: 16px !important; /* Prevents zoom on iOS */
+        }
+    }
+}
+
+/* Android Chrome specific fixes */
+@media (max-width: 768px) {
+    body {
+        -webkit-tap-highlight-color: rgba(0, 122, 255, 0.1);
+    }
+    
+    /* Prevent text selection on buttons for better mobile feel */
+    .btn,
+    .page-link {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
     }
 }
 
@@ -671,6 +1741,172 @@ main {
     color: var(--text-primary);
 }
 
+/* Flight Selected Notification - Liquid Glass Effect */
+.flight-selected-notification {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 10000;
+    opacity: 0;
+    transform: translateX(400px) scale(0.9);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    max-width: 320px;
+}
+
+.flight-selected-notification.show {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+}
+
+.notification-content {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    padding: 0.875rem 1rem;
+    box-shadow: 
+        0 8px 32px rgba(0, 122, 255, 0.15),
+        0 4px 16px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.notification-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.8) 50%, 
+        transparent 100%);
+    pointer-events: none;
+}
+
+.notification-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--success-color) 0%, #30B04F 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.125rem;
+    flex-shrink: 0;
+    box-shadow: 
+        0 4px 12px rgba(52, 199, 89, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.notification-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.125rem;
+    letter-spacing: -0.2px;
+    line-height: 1.2;
+}
+
+.notification-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+.notification-price {
+    font-size: 1rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+}
+
+.notification-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.04);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 0.5px solid rgba(0, 0, 0, 0.06);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 0.75rem;
+    flex-shrink: 0;
+}
+
+.notification-close:hover {
+    background: rgba(0, 0, 0, 0.08);
+    color: var(--text-primary);
+    transform: scale(1.1);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    .flight-selected-notification {
+        top: 0.75rem;
+        right: 0.75rem;
+        left: auto;
+        max-width: 280px;
+    }
+    
+    .notification-content {
+        padding: 0.75rem 0.875rem;
+        gap: 0.625rem;
+    }
+    
+    .notification-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+    
+    .notification-title {
+        font-size: 0.8125rem;
+    }
+    
+    .notification-subtitle {
+        font-size: 0.6875rem;
+    }
+    
+    .notification-price {
+        font-size: 0.9375rem;
+    }
+    
+    .notification-close {
+        width: 22px;
+        height: 22px;
+        font-size: 0.6875rem;
+        top: 0.375rem;
+        right: 0.375rem;
+    }
+}
+
 /* Premium Ripple Effect */
 .btn {
     position: relative;
@@ -747,4 +1983,87 @@ hr {
 .form-check-label {
     color: var(--text-primary);
     font-weight: 500;
+}
+
+/* Premium Modal */
+.premium-modal .modal-content {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: var(--blur-lg);
+    -webkit-backdrop-filter: var(--blur-lg);
+    border: 0.5px solid rgba(0, 0, 0, 0.1);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 16px 64px rgba(0, 0, 0, 0.2);
+}
+
+.premium-modal .modal-header {
+    border-bottom: 1px solid var(--border-color);
+    padding: 1.5rem;
+}
+
+.premium-modal .modal-body {
+    padding: 1.5rem;
+}
+
+.premium-modal .modal-title {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* Flight Details Content */
+.flight-details-content {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.flight-detail-segment {
+    padding: 0.75rem;
+    background: rgba(248, 249, 250, 0.6);
+    border-radius: var(--radius-md);
+    border: 0.5px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Favorite Card */
+.favorite-card {
+    transition: all var(--transition-base);
+    height: 100%;
+}
+
+.favorite-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Navbar Links */
+.navbar-nav .nav-link {
+    color: var(--text-primary) !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem !important;
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+    margin: 0 0.25rem;
+}
+
+.navbar-nav .nav-link:hover {
+    background: rgba(0, 122, 255, 0.1);
+    color: var(--primary-color) !important;
+}
+
+/* Button Groups */
+.btn-favorite,
+.btn-details {
+    width: 40px;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-favorite.active,
+.btn-favorite.text-danger {
+    color: var(--danger-color) !important;
+}
+
+.btn-favorite.active i,
+.btn-favorite.text-danger i {
+    color: var(--danger-color);
 }

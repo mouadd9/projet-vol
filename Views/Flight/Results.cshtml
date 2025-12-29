@@ -4,7 +4,7 @@
     ViewData["Title"] = "Flight Results";
 }
 
-<div class="container mt-4 fade-in">
+<div class="container mt-3 mt-md-4 fade-in">
     <!-- Search Summary & Modify Button -->
     <div class="card mb-4">
         <div class="card-body">
@@ -38,7 +38,7 @@
     <div class="row">
         <!-- Filters Sidebar -->
         <div class="col-lg-3">
-            <div class="card slide-in">
+            <div class="card slide-in sticky-filters">
                 <div class="card-header">
                     <h6 class="mb-0"><i class="fas fa-filter"></i> Filters & Sort</h6>
                 </div>
@@ -120,15 +120,64 @@
                                 </option>
                             </select>
                         </div>
+
+                        <hr />
+
+                        <!-- Advanced Filters -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-sliders-h me-1"></i>Advanced Filters
+                            </label>
+                            
+                            <!-- Airlines Filter -->
+                            <div class="mb-2">
+                                <label class="form-label small">Airlines</label>
+                                <select class="form-select form-select-sm" 
+                                       name="airlines" id="airlinesFilter" 
+                                       onchange="submitFilterForm()">
+                                    <option value="">All Airlines</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Departure Airport Filter -->
+                            <div class="mb-2">
+                                <label class="form-label small">Departure Airport</label>
+                                <select class="form-select form-select-sm" 
+                                       name="departureAirport" id="departureAirportFilter"
+                                       onchange="submitFilterForm()">
+                                    <option value="">All Airports</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Arrival Airport Filter -->
+                            <div class="mb-2">
+                                <label class="form-label small">Arrival Airport</label>
+                                <select class="form-select form-select-sm" 
+                                       name="arrivalAirport" id="arrivalAirportFilter"
+                                       onchange="submitFilterForm()">
+                                    <option value="">All Airports</option>
+                                </select>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
 
         <!-- Results List -->
-        <div class="col-lg-9">
+        <div class="col-lg-9 position-relative">
             <div class="mb-3">
                 <h5>@Model.TotalResults flights found</h5>
+            </div>
+            
+            <!-- Navigation Buttons -->
+            <div class="flight-navigation-buttons">
+                <button class="btn-nav-flight btn-nav-up" onclick="scrollFlights('up')" aria-label="Scroll up">
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+                <button class="btn-nav-flight btn-nav-down" onclick="scrollFlights('down')" aria-label="Scroll down">
+                    <i class="fas fa-chevron-down"></i>
+                </button>
             </div>
 
             @if (Model.FlightOffers == null || !Model.FlightOffers.Any())
@@ -144,101 +193,147 @@
                 @foreach (var flight in Model.FlightOffers)
                 {
                     <div class="card mb-3 flight-card fade-in" style="animation-delay: @(flightIndex * 0.1)s;">
-                        <div class="card-body">
-                            <div class="row align-items-center">
-                                <!-- Outbound Flight Info -->
-                                <div class="col-md-8">
-                                    <div class="mb-2">
-                                        <span class="badge bg-primary">Outbound</span>
-                                        @if (flight.NumberOfStops == 0)
-                                        {
-                                            <span class="badge bg-success">Direct</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-warning text-dark">
-                                                @flight.NumberOfStops @(flight.NumberOfStops == 1 ? "Stop" : "Stops")
+                        <div class="card-body p-3">
+                            <div class="row g-0">
+                                <!-- Flight Details -->
+                                <div class="col-md-8 pe-md-3">
+                                    <!-- Outbound Section -->
+                                    <div class="flight-section">
+                                        <div class="flight-header mb-2">
+                                            <span class="badge flight-badge-outbound">
+                                                <i class="fas fa-plane-departure me-1"></i> Outbound
                                             </span>
-                                        }
+                                            @if (flight.NumberOfStops == 0)
+                                            {
+                                                <span class="badge flight-badge-direct">
+                                                    <i class="fas fa-check-circle me-1"></i> Direct
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge flight-badge-stops">
+                                                    <i class="fas fa-exchange-alt me-1"></i> @flight.NumberOfStops @(flight.NumberOfStops == 1 ? "Stop" : "Stops")
+                                                </span>
+                                            }
+                                        </div>
+
+                                        <div class="flight-segments">
+                                            @for (int i = 0; i < flight.OutboundSegments.Count; i++)
+                                            {
+                                                var segment = flight.OutboundSegments[i];
+                                                <div class="flight-segment-item @(i < flight.OutboundSegments.Count - 1 ? "mb-2" : "")">
+                                                    <div class="flight-route">
+                                                        <div class="flight-time-block">
+                                                            <div class="flight-time">@segment.DepartureTime.ToString("HH:mm")</div>
+                                                            <div class="flight-airport">@segment.DepartureAirport</div>
+                                                        </div>
+                                                        <div class="flight-connection">
+                                                            <div class="flight-duration">
+                                                                <i class="fas fa-clock me-1"></i>@segment.Duration.ToString(@"h\h\ m\m")
+                                                            </div>
+                                                            <div class="flight-line">
+                                                                <div class="flight-line-path"></div>
+                                                                <i class="fas fa-plane flight-plane-icon"></i>
+                                                            </div>
+                                                            <div class="flight-airline">@segment.AirlineName</div>
+                                                        </div>
+                                                        <div class="flight-time-block text-end">
+                                                            <div class="flight-time">@segment.ArrivalTime.ToString("HH:mm")</div>
+                                                            <div class="flight-airport">@segment.ArrivalAirport</div>
+                                                        </div>
+                                                    </div>
+                                                    @if (i < flight.OutboundSegments.Count - 1)
+                                                    {
+                                                        <div class="flight-layover">
+                                                            <i class="fas fa-circle"></i> Layover in @segment.ArrivalAirport
+                                                        </div>
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
                                     </div>
 
-                                    @foreach (var segment in flight.OutboundSegments)
-                                    {
-                                        <div class="d-flex align-items-center mb-2">
-                                            <div class="flex-grow-1">
-                                                <div class="row">
-                                                    <div class="col-3">
-                                                        <div class="fw-bold">@segment.DepartureTime.ToString("HH:mm")</div>
-                                                        <div class="text-muted small">@segment.DepartureAirport</div>
-                                                    </div>
-                                                    <div class="col-6 text-center">
-                                                        <div class="text-muted small">
-                                                            @segment.Duration.ToString(@"h\h\ m\m")
-                                                        </div>
-                                                        <div>
-                                                            <i class="fas fa-long-arrow-alt-right"></i>
-                                                        </div>
-                                                        <div class="text-muted small">@segment.AirlineName</div>
-                                                    </div>
-                                                    <div class="col-3 text-end">
-                                                        <div class="fw-bold">@segment.ArrivalTime.ToString("HH:mm")</div>
-                                                        <div class="text-muted small">@segment.ArrivalAirport</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    }
-
-                                    <!-- Return Flight Info -->
+                                    <!-- Return Flight Section -->
                                     @if (flight.ReturnSegments != null && flight.ReturnSegments.Any())
                                     {
-                                        <hr />
-                                        <div class="mb-2">
-                                            <span class="badge bg-info">Return</span>
-                                        </div>
-
-                                        @foreach (var segment in flight.ReturnSegments)
-                                        {
-                                            <div class="d-flex align-items-center mb-2">
-                                                <div class="flex-grow-1">
-                                                    <div class="row">
-                                                        <div class="col-3">
-                                                            <div class="fw-bold">@segment.DepartureTime.ToString("HH:mm")</div>
-                                                            <div class="text-muted small">@segment.DepartureAirport</div>
-                                                        </div>
-                                                        <div class="col-6 text-center">
-                                                            <div class="text-muted small">
-                                                                @segment.Duration.ToString(@"h\h\ m\m")
-                                                            </div>
-                                                            <div>
-                                                                <i class="fas fa-long-arrow-alt-right"></i>
-                                                            </div>
-                                                            <div class="text-muted small">@segment.AirlineName</div>
-                                                        </div>
-                                                        <div class="col-3 text-end">
-                                                            <div class="fw-bold">@segment.ArrivalTime.ToString("HH:mm")</div>
-                                                            <div class="text-muted small">@segment.ArrivalAirport</div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                        <div class="flight-divider my-3"></div>
+                                        <div class="flight-section">
+                                            <div class="flight-header mb-2">
+                                                <span class="badge flight-badge-return">
+                                                    <i class="fas fa-plane-arrival me-1"></i> Return
+                                                </span>
                                             </div>
-                                        }
+
+                                            <div class="flight-segments">
+                                                @for (int i = 0; i < flight.ReturnSegments.Count; i++)
+                                                {
+                                                    var segment = flight.ReturnSegments[i];
+                                                    <div class="flight-segment-item @(i < flight.ReturnSegments.Count - 1 ? "mb-2" : "")">
+                                                        <div class="flight-route">
+                                                            <div class="flight-time-block">
+                                                                <div class="flight-time">@segment.DepartureTime.ToString("HH:mm")</div>
+                                                                <div class="flight-airport">@segment.DepartureAirport</div>
+                                                            </div>
+                                                            <div class="flight-connection">
+                                                                <div class="flight-duration">
+                                                                    <i class="fas fa-clock me-1"></i>@segment.Duration.ToString(@"h\h\ m\m")
+                                                                </div>
+                                                                <div class="flight-line">
+                                                                    <div class="flight-line-path"></div>
+                                                                    <i class="fas fa-plane flight-plane-icon"></i>
+                                                                </div>
+                                                                <div class="flight-airline">@segment.AirlineName</div>
+                                                            </div>
+                                                            <div class="flight-time-block text-end">
+                                                                <div class="flight-time">@segment.ArrivalTime.ToString("HH:mm")</div>
+                                                                <div class="flight-airport">@segment.ArrivalAirport</div>
+                                                            </div>
+                                                        </div>
+                                                        @if (i < flight.ReturnSegments.Count - 1)
+                                                        {
+                                                            <div class="flight-layover">
+                                                                <i class="fas fa-circle"></i> Layover in @segment.ArrivalAirport
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
                                     }
                                 </div>
 
-                                <!-- Price & Book -->
-                                <div class="col-md-4 text-center border-start">
-                                    <div class="h3 text-primary mb-2">
-                                        @flight.Currency @flight.Price.ToString("N2")
-                                    </div>
-                                    <div class="text-muted small mb-3">
-                                        Total for @Model.SearchCriteria.NumberOfPassengers passenger(s)
-                                    </div>
-
-                                    <div class="mt-2">
-                                        <small class="text-muted">
-                                            Total Duration: @flight.TotalDuration.ToString(@"h\h\ m\m")
-                                        </small>
+                                <!-- Price Section -->
+                                <div class="col-md-4 flight-price-section">
+                                    <div class="flight-price-card">
+                                        <div class="flight-price-amount">
+                                            <span class="flight-currency">@flight.Currency</span>
+                                            <span class="flight-price">@flight.Price.ToString("N2")</span>
+                                        </div>
+                                        <div class="flight-price-details">
+                                            <div class="flight-price-detail-item">
+                                                <i class="fas fa-users me-1"></i>
+                                                @Model.SearchCriteria.NumberOfPassengers @(Model.SearchCriteria.NumberOfPassengers == 1 ? "Passenger" : "Passengers")
+                                            </div>
+                                            <div class="flight-price-detail-item">
+                                                <i class="fas fa-hourglass-half me-1"></i>
+                                                @flight.TotalDuration.ToString(@"h\h\ m\m") total
+                                            </div>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-primary btn-select-flight flex-grow-1" 
+                                                    onclick="selectFlight('@flight.Id', '@flight.Currency', '@flight.Price.ToString("N2")', '@Model.SearchCriteria.DepartureCity', '@Model.SearchCriteria.ArrivalCity')">
+                                                <i class="fas fa-check me-2"></i>Select
+                                            </button>
+                                            <button class="btn btn-outline-secondary btn-details" 
+                                                    onclick="showFlightDetailsModal('@flight.Id')"
+                                                    title="View details">
+                                                <i class="fas fa-info-circle"></i>
+                                            </button>
+                                        </div>
+                                        <button class="btn btn-link btn-sm w-100 mt-2 text-primary p-0" 
+                                                onclick="showPriceAlertModal('@Model.SearchCriteria.DepartureCity', '@Model.SearchCriteria.ArrivalCity', '@Model.SearchCriteria.DepartureDate.ToString("yyyy-MM-dd")', '@(Model.SearchCriteria.ReturnDate?.ToString("yyyy-MM-dd") ?? "")', '@flight.Currency', '@flight.Price.ToString("N2")')">
+                                            <i class="fas fa-bell me-1"></i>Set Price Alert
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -396,5 +491,335 @@
                 form.submit();
             }
         }
+        
+        // Flight cards navigation scrolling
+        function scrollFlights(direction) {
+            const scrollAmount = window.innerHeight * 0.8; // Scroll 80% of viewport height
+            const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+            
+            if (direction === 'up') {
+                window.scrollTo({
+                    top: Math.max(0, currentScroll - scrollAmount),
+                    behavior: 'smooth'
+                });
+            } else {
+                window.scrollTo({
+                    top: currentScroll + scrollAmount,
+                    behavior: 'smooth'
+                });
+            }
+            
+            // Update button visibility
+            updateNavButtons();
+        }
+        
+        // Update navigation buttons visibility
+        function updateNavButtons() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight;
+            const clientHeight = document.documentElement.clientHeight;
+            
+            const btnUp = document.querySelector('.btn-nav-up');
+            const btnDown = document.querySelector('.btn-nav-down');
+            
+            if (btnUp) {
+                btnUp.style.opacity = scrollTop > 100 ? '1' : '0.3';
+                btnUp.style.pointerEvents = scrollTop > 100 ? 'auto' : 'none';
+            }
+            
+            if (btnDown) {
+                const isNearBottom = scrollTop + clientHeight >= scrollHeight - 100;
+                btnDown.style.opacity = isNearBottom ? '0.3' : '1';
+                btnDown.style.pointerEvents = isNearBottom ? 'none' : 'auto';
+            }
+        }
+        
+        // Load filter options
+        function loadFilterOptions() {
+            $.ajax({
+                url: '@Url.Action("GetFilterOptions", "Flight")',
+                method: 'GET',
+                success: function(response) {
+                    if (response.success) {
+                        // Populate airlines dropdown
+                        const airlinesSelect = $('#airlinesFilter');
+                        const currentAirline = '@(Model.AppliedFilters?.Airlines ?? "")';
+                        response.airlines.forEach(function(airline) {
+                            const option = $('<option></option>').val(airline).text(airline);
+                            if (airline === currentAirline) {
+                                option.prop('selected', true);
+                            }
+                            airlinesSelect.append(option);
+                        });
+                        
+                        // Populate departure airport dropdown
+                        const depAirportSelect = $('#departureAirportFilter');
+                        const currentDepAirport = '@(Model.AppliedFilters?.DepartureAirport ?? "")';
+                        response.airports.forEach(function(airport) {
+                            const option = $('<option></option>').val(airport).text(airport);
+                            if (airport === currentDepAirport) {
+                                option.prop('selected', true);
+                            }
+                            depAirportSelect.append(option);
+                        });
+                        
+                        // Populate arrival airport dropdown
+                        const arrAirportSelect = $('#arrivalAirportFilter');
+                        const currentArrAirport = '@(Model.AppliedFilters?.ArrivalAirport ?? "")';
+                        response.airports.forEach(function(airport) {
+                            const option = $('<option></option>').val(airport).text(airport);
+                            if (airport === currentArrAirport) {
+                                option.prop('selected', true);
+                            }
+                            arrAirportSelect.append(option);
+                        });
+                    }
+                }
+            });
+        }
+        
+        // Initialize navigation buttons
+        $(document).ready(function() {
+            // Load filter options
+            loadFilterOptions();
+            updateNavButtons();
+            window.addEventListener('scroll', updateNavButtons);
+            window.addEventListener('resize', updateNavButtons);
+        });
+        
+        // Select Flight function
+        function selectFlight(flightId, currency, price, departureCity, arrivalCity) {
+            // Show premium notification
+            showFlightSelectedNotification(currency, price, departureCity, arrivalCity);
+            
+            // Store selected flight in session
+            $.ajax({
+                url: '@Url.Action("SelectFlight", "Flight")',
+                method: 'POST',
+                data: {
+                    flightId: flightId,
+                    currency: currency,
+                    price: price
+                },
+                success: function(response) {
+                    console.log('Flight selected successfully');
+                },
+                error: function() {
+                    console.log('Error selecting flight');
+                }
+            });
+        }
+        
+        // Premium notification for flight selection
+        function showFlightSelectedNotification(currency, price, departureCity, arrivalCity) {
+            // Remove existing notification if any
+            $('.flight-selected-notification').remove();
+            
+            // Create notification
+            const notification = $(`
+                <div class="flight-selected-notification">
+                    <div class="notification-content">
+                        <div class="notification-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="notification-text">
+                            <div class="notification-title">Flight Selected!</div>
+                            <div class="notification-subtitle">${departureCity} → ${arrivalCity}</div>
+                            <div class="notification-price">${currency} ${price}</div>
+                        </div>
+                        <button class="notification-close" onclick="$(this).closest('.flight-selected-notification').fadeOut(300, function() { $(this).remove(); })">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            `);
+            
+            // Add to body
+            $('body').append(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.addClass('show');
+            }, 10);
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                notification.fadeOut(300, function() {
+                    $(this).remove();
+                });
+            }, 5000);
+        }
+        
+        
+        // Show Flight Details Modal
+        function showFlightDetailsModal(flightId) {
+            const modal = new bootstrap.Modal(document.getElementById('flightDetailsModal'));
+            const content = document.getElementById('flightDetailsContent');
+            
+            // Show loading
+            content.innerHTML = `
+                <div class="text-center py-4">
+                    <div class="premium-spinner" style="width: 40px; height: 40px; margin: 0 auto;"></div>
+                    <p class="text-muted mt-3">Loading flight details...</p>
+                </div>
+            `;
+            
+            modal.show();
+            
+            // Fetch flight details
+            $.ajax({
+                url: '@Url.Action("GetFlightDetails", "Flight")',
+                method: 'GET',
+                data: { flightId: flightId },
+                success: function(response) {
+                    if (response.success && response.flight) {
+                        const flight = response.flight;
+                        let html = '<div class="flight-details-content">';
+                        
+                        // Outbound segments
+                        if (flight.outboundSegments && flight.outboundSegments.length > 0) {
+                            html += '<div class="row mb-3"><div class="col-12"><h6><i class="fas fa-plane-departure me-2"></i>Outbound Flight</h6>';
+                            flight.outboundSegments.forEach(function(segment) {
+                                const depTime = new Date(segment.departureTime).toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'});
+                                const arrTime = new Date(segment.arrivalTime).toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'});
+                                const duration = formatDuration(segment.duration);
+                                html += `
+                                    <div class="flight-detail-segment mb-3">
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <div>
+                                                <strong>${depTime}</strong>
+                                                <div class="small text-muted">${segment.departureAirport || 'N/A'}</div>
+                                            </div>
+                                            <div class="text-center">
+                                                <div class="small text-muted">${duration}</div>
+                                                <i class="fas fa-arrow-right"></i>
+                                                <div class="small text-muted">${segment.airlineName || 'N/A'}</div>
+                                            </div>
+                                            <div class="text-end">
+                                                <strong>${arrTime}</strong>
+                                                <div class="small text-muted">${segment.arrivalAirport || 'N/A'}</div>
+                                            </div>
+                                        </div>
+                                        <div class="small">
+                                            <span class="badge bg-info">Flight: ${segment.flightNumber || 'N/A'}</span>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                            html += '</div></div>';
+                        }
+                        
+                        // Return segments
+                        if (flight.returnSegments && flight.returnSegments.length > 0) {
+                            html += '<div class="row mb-3"><div class="col-12"><h6><i class="fas fa-plane-arrival me-2"></i>Return Flight</h6>';
+                            flight.returnSegments.forEach(function(segment) {
+                                const depTime = new Date(segment.departureTime).toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'});
+                                const arrTime = new Date(segment.arrivalTime).toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'});
+                                const duration = formatDuration(segment.duration);
+                                html += `
+                                    <div class="flight-detail-segment mb-3">
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <div>
+                                                <strong>${depTime}</strong>
+                                                <div class="small text-muted">${segment.departureAirport || 'N/A'}</div>
+                                            </div>
+                                            <div class="text-center">
+                                                <div class="small text-muted">${duration}</div>
+                                                <i class="fas fa-arrow-right"></i>
+                                                <div class="small text-muted">${segment.airlineName || 'N/A'}</div>
+                                            </div>
+                                            <div class="text-end">
+                                                <strong>${arrTime}</strong>
+                                                <div class="small text-muted">${segment.arrivalAirport || 'N/A'}</div>
+                                            </div>
+                                        </div>
+                                        <div class="small">
+                                            <span class="badge bg-info">Flight: ${segment.flightNumber || 'N/A'}</span>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                            html += '</div></div>';
+                        }
+                        
+                        // Flight info
+                        html += '<hr><div class="row"><div class="col-md-6"><h6>Flight Information</h6><ul class="list-unstyled">';
+                        html += `<li><i class="fas fa-clock me-2"></i>Total Duration: ${formatDuration(flight.totalDuration)}</li>`;
+                        html += `<li><i class="fas fa-exchange-alt me-2"></i>Stops: ${flight.numberOfStops || 0}</li>`;
+                        html += `<li><i class="fas fa-plane me-2"></i>Airline: ${flight.airline || flight.airlineCode || 'N/A'}</li>`;
+                        html += '</ul></div><div class="col-md-6"><h6>Price Details</h6><ul class="list-unstyled">';
+                        html += `<li><strong>Price: ${flight.currency || 'USD'} ${parseFloat(flight.price || 0).toFixed(2)}</strong></li>`;
+                        html += '<li class="small text-muted">Includes taxes and fees</li></ul></div></div></div>';
+                        
+                        content.innerHTML = html;
+                    } else {
+                        content.innerHTML = '<div class="alert alert-info">Flight details not available</div>';
+                    }
+                },
+                error: function() {
+                    content.innerHTML = '<div class="alert alert-danger">Error loading flight details</div>';
+                }
+            });
+        }
+        
+        // Show Price Alert Modal
+        function showPriceAlertModal(departureCity, arrivalCity, departureDate, returnDate, currency, currentPrice) {
+            document.getElementById('alertDepartureCity').value = departureCity;
+            document.getElementById('alertArrivalCity').value = arrivalCity;
+            document.getElementById('alertDepartureDate').value = departureDate;
+            document.getElementById('alertReturnDate').value = returnDate || '';
+            document.getElementById('alertCurrency').value = currency;
+            
+            // Update display
+            document.getElementById('alertRouteDisplay').textContent = departureCity + ' → ' + arrivalCity;
+            document.getElementById('alertCurrentPriceDisplay').textContent = currency + ' ' + parseFloat(currentPrice).toFixed(2);
+            document.getElementById('alertCurrencyDisplay').textContent = currency;
+            
+            // Set default target price (slightly lower than current)
+            const targetPriceInput = document.querySelector('input[name="targetPrice"]');
+            if (targetPriceInput && currentPrice) {
+                targetPriceInput.value = (parseFloat(currentPrice) * 0.9).toFixed(2);
+            }
+            
+            const modal = new bootstrap.Modal(document.getElementById('priceAlertModal'));
+            modal.show();
+        }
+        
+        // Format duration helper
+        function formatDuration(duration) {
+            if (!duration) return 'N/A';
+            if (typeof duration === 'string') {
+                return duration;
+            }
+            const hours = Math.floor(duration / 36000000000);
+            const minutes = Math.floor((duration % 36000000000) / 600000000);
+            return hours + 'h ' + minutes + 'm';
+        }
+        
+        // Handle Price Alert Form
+        $('#priceAlertForm').on('submit', function(e) {
+            e.preventDefault();
+            const formData = {
+                departureCity: $('#alertDepartureCity').val(),
+                arrivalCity: $('#alertArrivalCity').val(),
+                departureDate: $('#alertDepartureDate').val(),
+                returnDate: $('#alertReturnDate').val() || null,
+                targetPrice: $('input[name="targetPrice"]').val(),
+                currency: $('#alertCurrency').val(),
+                email: $('input[name="email"]').val()
+            };
+            
+            $.ajax({
+                url: '@Url.Action("CreatePriceAlert", "Flight")',
+                method: 'POST',
+                data: formData,
+                success: function(response) {
+                    if (response.success) {
+                        bootstrap.Modal.getInstance(document.getElementById('priceAlertModal')).hide();
+                        showFlightSelectedNotification('', '', '', '', 'Price alert created!');
+                    }
+                }
+            });
+        });
     </script>
 }

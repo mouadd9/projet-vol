@@ -12,6 +12,7 @@ namespace MoteurDeRechercheDeVol.Data
 
         public DbSet<SearchHistory> SearchHistories { get; set; }
         public DbSet<City> Cities { get; set; }
+        public DbSet<PriceAlert> PriceAlerts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -22,6 +23,12 @@ namespace MoteurDeRechercheDeVol.Data
 
             modelBuilder.Entity<City>()
                 .HasIndex(c => c.CityName);
+
+            modelBuilder.Entity<PriceAlert>()
+                .HasIndex(p => p.IsActive);
+            
+            modelBuilder.Entity<PriceAlert>()
+                .HasIndex(p => p.Email);
         }
     }
 }

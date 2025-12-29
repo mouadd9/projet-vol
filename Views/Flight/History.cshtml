@@ -1,0 +1,110 @@
+@model List<MoteurDeRechercheDeVol.Models.SearchHistory>
+
+@{
+    ViewData["Title"] = "Search History";
+}
+
+<div class="container mt-4 fade-in">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0"><i class="fas fa-history me-2"></i>Search History</h3>
+                </div>
+                <div class="card-body">
+                    @if (Model == null || !Model.Any())
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No search history found</p>
+                            <a asp-action="Search" class="btn btn-primary">
+                                <i class="fas fa-search me-2"></i>Start Searching
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Route</th>
+                                        <th>Dates</th>
+                                        <th>Passengers</th>
+                                        <th>Class</th>
+                                        <th>Type</th>
+                                        <th>Searched</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var search in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@search.DepartureCity</strong>
+                                                <i class="fas fa-arrow-right mx-2 text-muted"></i>
+                                                <strong>@search.ArrivalCity</strong>
+                                            </td>
+                                            <td>
+                                                @search.DepartureDate.ToString("MMM dd, yyyy")
+                                                @if (search.ReturnDate.HasValue)
+                                                {
+                                                    <br><small class="text-muted">Return: @search.ReturnDate.Value.ToString("MMM dd, yyyy")</small>
+                                                }
+                                            </td>
+                                            <td>@search.NumberOfPassengers</td>
+                                            <td><span class="badge bg-info">@search.ClassType</span></td>
+                                            <td><span class="badge bg-secondary">@search.TripType</span></td>
+                                            <td><small class="text-muted">@search.SearchDate.ToString("MMM dd, yyyy HH:mm")</small></td>
+                                            <td>
+                                                <a href="javascript:void(0)" 
+                                                   onclick="repeatSearch('@search.DepartureCity', '@search.ArrivalCity', '@search.DepartureDate.ToString("yyyy-MM-dd")', '@(search.ReturnDate?.ToString("yyyy-MM-dd") ?? "")', @search.NumberOfPassengers, '@search.ClassType', '@search.TripType')"
+                                                   class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-redo me-1"></i>Repeat
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function repeatSearch(departureCity, arrivalCity, departureDate, returnDate, passengers, classType, tripType) {
+            // Create a form and submit it
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '@Url.Action("Search", "Flight")';
+            
+            form.appendChild(createInput('DepartureCity', departureCity));
+            form.appendChild(createInput('ArrivalCity', arrivalCity));
+            form.appendChild(createInput('DepartureDate', departureDate));
+            if (returnDate) {
+                form.appendChild(createInput('ReturnDate', returnDate));
+            }
+            form.appendChild(createInput('NumberOfPassengers', passengers));
+            form.appendChild(createInput('ClassType', classType));
+            form.appendChild(createInput('TripType', tripType));
+            
+            document.body.appendChild(form);
+            form.submit();
+        }
+        
+        function createInput(name, value) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = name;
+            input.value = value;
+            return input;
+        }
+    </script>
+}
+
