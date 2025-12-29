@@ -2,7 +2,44 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+            <div class="card glass-dark p-5 mb-4">
+                <h1 class="display-4 fw-bold mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                    Welcome to FlightSearch
+                </h1>
+                <p class="lead text-muted mb-4">
+                    Discover your next adventure with our premium flight search experience
+                </p>
+                <a href="/Flight/Search" class="btn btn-primary btn-lg">
+                    <i class="fas fa-search me-2"></i> Start Searching
+                </a>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-md-4 mb-3">
+                    <div class="card glass p-4 h-100">
+                        <i class="fas fa-bolt fa-3x text-primary mb-3"></i>
+                        <h5 class="fw-bold">Fast Search</h5>
+                        <p class="text-muted small">Find flights in seconds with our optimized search engine</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card glass p-4 h-100">
+                        <i class="fas fa-shield-alt fa-3x text-success mb-3"></i>
+                        <h5 class="fw-bold">Reliable Results</h5>
+                        <p class="text-muted small">Get accurate flight information from trusted sources</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card glass p-4 h-100">
+                        <i class="fas fa-heart fa-3x text-danger mb-3"></i>
+                        <h5 class="fw-bold">Best Prices</h5>
+                        <p class="text-muted small">Compare prices and find the best deals for your trip</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

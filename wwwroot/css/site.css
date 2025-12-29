@@ -1,79 +1,464 @@
+/* Premium Apple-like Design with Glassmorphism */
+
 :root {
-    --primary-color: #0066cc;
-    --secondary-color: #28a745;
+    --primary-color: #007AFF;
+    --primary-dark: #0051D5;
+    --primary-light: #5AC8FA;
+    --secondary-color: #34C759;
+    --accent-color: #FF9500;
+    --text-primary: #1D1D1F;
+    --text-secondary: #86868B;
+    --bg-primary: #F5F5F7;
+    --bg-glass: rgba(255, 255, 255, 0.7);
+    --bg-glass-dark: rgba(255, 255, 255, 0.85);
+    --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.15);
+    --border-radius: 20px;
+    --border-radius-sm: 12px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f8f9fa;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    min-height: 100vh;
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    position: relative;
+    overflow-x: hidden;
 }
 
+/* Animated gradient background */
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Floating background elements */
+body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: float 20s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes float {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    100% { transform: translate(-50px, -50px) rotate(360deg); }
+}
+
+/* Glassmorphism effect */
+.glass {
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: var(--shadow-md);
+}
+
+.glass-dark {
+    background: var(--bg-glass-dark);
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Navigation */
+.navbar {
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: var(--shadow-sm);
+    padding: 1rem 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary) !important;
+    letter-spacing: -0.5px;
+    transition: transform 0.3s ease;
+}
+
+.navbar-brand:hover {
+    transform: scale(1.05);
+}
+
+.navbar-brand i {
+    color: var(--primary-color);
+    margin-right: 8px;
+}
+
+/* Main content */
+main {
+    position: relative;
+    z-index: 1;
+    padding-top: 2rem;
+    padding-bottom: 4rem;
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: var(--shadow-md);
+}
+
+.card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: var(--shadow-lg);
+}
+
+.card-header {
+    background: linear-gradient(135deg, rgba(0, 122, 255, 0.1) 0%, rgba(90, 200, 250, 0.1) 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+/* Flight cards */
 .flight-card {
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    background: var(--bg-glass-dark);
+    backdrop-filter: blur(25px) saturate(180%);
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .flight-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+    transform: translateY(-6px) scale(1.01);
+    box-shadow: var(--shadow-lg);
+    border-color: rgba(0, 122, 255, 0.5);
 }
 
+/* Form elements */
+.form-control,
+.form-select {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: var(--border-radius-sm);
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 0.95rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+    background: rgba(255, 255, 255, 1);
+    transform: translateY(-2px);
+    outline: none;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    letter-spacing: -0.2px;
+}
+
+.input-group-text {
+    background: rgba(0, 122, 255, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: var(--border-radius-sm) 0 0 var(--border-radius-sm);
+    color: var(--primary-color);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/* Buttons */
+.btn {
+    border-radius: var(--border-radius-sm);
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 122, 255, 0.4);
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+}
+
+.btn-outline-primary {
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
+}
+
+.btn-lg {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+}
+
+/* Badges */
+.badge {
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--border-radius-sm);
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.2px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.bg-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%) !important;
+}
+
+.bg-success {
+    background: linear-gradient(135deg, var(--secondary-color) 0%, #30D158 100%) !important;
+}
+
+.bg-warning {
+    background: linear-gradient(135deg, #FF9500 0%, #FFB340 100%) !important;
+}
+
+.bg-info {
+    background: linear-gradient(135deg, #5AC8FA 0%, #64D2FF 100%) !important;
+}
+
+/* Trip type buttons */
+.btn-group .btn-check:checked + .btn-outline-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    color: white;
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
+}
+
+.btn-group .btn-outline-primary {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-group .btn-outline-primary:hover {
+    transform: translateY(-2px);
+}
+
+/* Autocomplete */
 .ui-autocomplete {
     max-height: 300px;
     overflow-y: auto;
     overflow-x: hidden;
     z-index: 1050;
+    border-radius: var(--border-radius-sm);
+    background: var(--bg-glass-dark);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: var(--shadow-lg);
+    padding: 0.5rem 0;
 }
 
-.navbar-brand {
-    font-size: 1.5rem;
-    font-weight: bold;
+.ui-autocomplete .ui-menu-item {
+    padding: 0.75rem 1rem;
+    transition: all 0.2s ease;
+    border: none;
 }
 
-.card-header {
-    font-weight: 600;
+.ui-autocomplete .ui-menu-item:hover,
+.ui-autocomplete .ui-menu-item.ui-state-active {
+    background: rgba(0, 122, 255, 0.1);
+    border: none;
+    margin: 0;
 }
 
-.badge {
-    font-size: 0.75rem;
-    padding: 0.35em 0.65em;
+/* Footer */
+.footer {
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    margin-top: 4rem;
+    color: var(--text-secondary);
 }
 
 /* Loading spinner */
 .spinner-border-sm {
     width: 1rem;
     height: 1rem;
-}
-
-/* Form enhancements */
-.form-control:focus,
-.form-select:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.25);
-}
-
-.btn-primary {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-}
-
-.btn-primary:hover {
-    background-color: #0052a3;
-    border-color: #0052a3;
+    border-width: 0.15em;
 }
 
 /* Flight segment styling */
 .flight-segment {
-    padding: 10px;
+    padding: 1rem;
     border-left: 3px solid var(--primary-color);
-    margin-bottom: 10px;
+    margin-bottom: 1rem;
+    border-radius: var(--border-radius-sm);
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.flight-segment:hover {
+    background: rgba(255, 255, 255, 0.7);
+    transform: translateX(4px);
+}
+
+/* Alert */
+.alert {
+    border-radius: var(--border-radius-sm);
+    border: none;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-sm);
+}
+
+.alert-info {
+    background: rgba(90, 200, 250, 0.2);
+    color: var(--text-primary);
+    border: 1px solid rgba(90, 200, 250, 0.3);
+}
+
+/* Filters sidebar */
+.shadow-sm {
+    box-shadow: var(--shadow-sm) !important;
+}
+
+/* Smooth scroll */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Text colors */
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+.text-muted {
+    color: var(--text-secondary) !important;
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    .flight-card .col-md-4 {
-        border-top: 1px solid #dee2e6;
-        border-left: none !important;
-        margin-top: 15px;
-        padding-top: 15px;
+    .card {
+        border-radius: var(--border-radius-sm);
     }
+    
+    .flight-card .col-md-4 {
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        border-left: none !important;
+        margin-top: 1rem;
+        padding-top: 1rem;
+    }
+    
+    .btn-lg {
+        padding: 0.875rem 1.5rem;
+        font-size: 1rem;
+    }
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card,
+.flight-card {
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* Smooth transitions for all interactive elements */
+a, button, input, select, textarea {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Container spacing */
+.container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Price display */
+.h3.text-primary {
+    font-weight: 700;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }

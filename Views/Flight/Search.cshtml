@@ -7,9 +7,10 @@
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-lg-10">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h3 class="mb-0"><i class="fas fa-search"></i> Search Flights</h3>
+            <div class="card glass-dark">
+                <div class="card-header">
+                    <h3 class="mb-0"><i class="fas fa-search me-2"></i> Search Flights</h3>
+                    <small class="text-muted">Find your perfect flight with ease</small>
                 </div>
                 <div class="card-body p-4">
                     <form asp-action="Search" method="post" id="searchForm">
@@ -99,9 +100,9 @@
                         </div>
 
                         <!-- Submit Button -->
-                        <div class="d-grid">
+                        <div class="d-grid mt-4">
                             <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-search"></i> Search Flights
+                                <i class="fas fa-search me-2"></i> Search Flights
                             </button>
                         </div>
                     </form>
