@@ -4,15 +4,14 @@
     ViewData["Title"] = "Search Flights";
 }
 
-<div class="container mt-5">
+<div class="container mt-5 fade-in">
     <div class="row justify-content-center">
         <div class="col-lg-10">
-            <div class="card glass-dark">
+            <div class="card">
                 <div class="card-header">
-                    <h3 class="mb-0"><i class="fas fa-search me-2"></i> Search Flights</h3>
-                    <small class="text-muted">Find your perfect flight with ease</small>
+                    <h3 class="mb-0"><i class="fas fa-search"></i> Search Flights</h3>
                 </div>
-                <div class="card-body p-4">
+                <div class="card-body">
                     <form asp-action="Search" method="post" id="searchForm">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
@@ -100,15 +99,24 @@
                         </div>
 
                         <!-- Submit Button -->
-                        <div class="d-grid mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-search me-2"></i> Search Flights
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg" id="searchBtn">
+                                <i class="fas fa-search"></i> <span id="searchBtnText">Search Flights</span>
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Premium Loading Overlay -->
+<div id="loadingOverlay" class="loading-overlay" style="display: none;">
+    <div class="loading-content">
+        <div class="premium-spinner"></div>
+        <h3 class="mt-4">Searching Flights...</h3>
+        <p class="text-muted">Please wait while we find the best options for you</p>
     </div>
 </div>
 
@@ -165,18 +173,24 @@
                 $('#returnDateDiv').hide();
             }
 
-            // Show loading spinner on submit
+            // Show premium loading overlay on submit
             $('#searchForm').submit(function() {
                 if ($(this).valid()) {
-                    var btn = $(this).find('button[type="submit"]');
-                    var originalText = btn.html();
+                    var btn = $('#searchBtn');
+                    var btnText = $('#searchBtnText');
+                    var originalText = btnText.text();
+                    
                     btn.prop('disabled', true);
-                    btn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Searching...');
+                    btnText.html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Searching...');
+                    
+                    // Show premium loading overlay
+                    $('#loadingOverlay').fadeIn(300);
                     
                     // Re-enable after 30 seconds timeout in case of error (fallback)
                     setTimeout(function() {
                         btn.prop('disabled', false);
-                        btn.html(originalText);
+                        btnText.text(originalText);
+                        $('#loadingOverlay').fadeOut(300);
                     }, 30000);
                 }
             });

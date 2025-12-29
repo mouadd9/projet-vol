@@ -2,41 +2,55 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
+<div class="container fade-in">
+    <div class="row justify-content-center align-items-center" style="min-height: 60vh;">
         <div class="col-lg-8 text-center">
-            <div class="card glass-dark p-5 mb-4">
-                <h1 class="display-4 fw-bold mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-                    Welcome to FlightSearch
+            <div class="card" style="background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(30px); border: 1px solid rgba(0, 0, 0, 0.1); padding: 4rem 2rem;">
+                <h1 class="display-3 mb-4" style="font-weight: 700; letter-spacing: -2px; background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                    <i class="fas fa-plane" style="color: #007AFF;"></i> FlightSearch
                 </h1>
-                <p class="lead text-muted mb-4">
+                <p class="lead mb-4" style="color: #6E6E73; font-size: 1.25rem; font-weight: 400;">
                     Discover your next adventure with our premium flight search experience
                 </p>
-                <a href="/Flight/Search" class="btn btn-primary btn-lg">
-                    <i class="fas fa-search me-2"></i> Start Searching
-                </a>
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    <a asp-controller="Flight" asp-action="Search" class="btn btn-primary btn-lg">
+                        <i class="fas fa-search"></i> Search Flights
+                    </a>
+                </div>
             </div>
             
-            <div class="row mt-4">
-                <div class="col-md-4 mb-3">
-                    <div class="card glass p-4 h-100">
-                        <i class="fas fa-bolt fa-3x text-primary mb-3"></i>
-                        <h5 class="fw-bold">Fast Search</h5>
-                        <p class="text-muted small">Find flights in seconds with our optimized search engine</p>
+            <div class="row mt-5">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 hover-lift">
+                        <div class="card-body text-center">
+                            <div class="mb-3" style="font-size: 3rem; color: #007AFF;">
+                                <i class="fas fa-globe"></i>
+                            </div>
+                            <h5 class="card-title">Worldwide Coverage</h5>
+                            <p class="card-text text-muted">Search flights to destinations across the globe</p>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <div class="card glass p-4 h-100">
-                        <i class="fas fa-shield-alt fa-3x text-success mb-3"></i>
-                        <h5 class="fw-bold">Reliable Results</h5>
-                        <p class="text-muted small">Get accurate flight information from trusted sources</p>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 hover-lift">
+                        <div class="card-body text-center">
+                            <div class="mb-3" style="font-size: 3rem; color: #34C759;">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <h5 class="card-title">Fast & Reliable</h5>
+                            <p class="card-text text-muted">Get instant results with our powerful search engine</p>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <div class="card glass p-4 h-100">
-                        <i class="fas fa-heart fa-3x text-danger mb-3"></i>
-                        <h5 class="fw-bold">Best Prices</h5>
-                        <p class="text-muted small">Compare prices and find the best deals for your trip</p>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 hover-lift">
+                        <div class="card-body text-center">
+                            <div class="mb-3" style="font-size: 3rem; color: #5856D6;">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <h5 class="card-title">Best Prices</h5>
+                            <p class="card-text text-muted">Compare prices from multiple airlines</p>
+                        </div>
                     </div>
                 </div>
             </div>

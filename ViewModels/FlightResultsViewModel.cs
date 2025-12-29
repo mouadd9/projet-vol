@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using MoteurDeRechercheDeVol.Models;
 
@@ -9,6 +10,9 @@ namespace MoteurDeRechercheDeVol.ViewModels
         public List<FlightOffer> FlightOffers { get; set; }
         public int TotalResults { get; set; }
         public FilterOptions AppliedFilters { get; set; }
+        public int CurrentPage { get; set; } = 1;
+        public int PageSize { get; set; } = 10;
+        public int TotalPages => (int)Math.Ceiling((double)TotalResults / PageSize);
     }
 
     public class FilterOptions

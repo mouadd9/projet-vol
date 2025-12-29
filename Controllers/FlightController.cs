@@ -92,11 +92,23 @@ namespace MoteurDeRechercheDeVol.Controllers
             {
                 var flights = await _flightApiService.SearchFlightsAsync(searchRequest);
 
+                var totalResults = flights.Count;
+                var pageSize = 10;
+                var page = 1;
+                var totalPages = (int)Math.Ceiling((double)totalResults / pageSize);
+                
+                var paginatedFlights = flights
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+
                 var resultsViewModel = new FlightResultsViewModel
                 {
                     SearchCriteria = model,
-                    FlightOffers = flights,
-                    TotalResults = flights.Count
+                    FlightOffers = paginatedFlights,
+                    TotalResults = totalResults,
+                    CurrentPage = page,
+                    PageSize = pageSize
                 };
 
                 // Store in Session for filtering/sorting (avoids HTTP 431 Cookie too large error)
@@ -113,7 +125,7 @@ namespace MoteurDeRechercheDeVol.Controllers
         }
 
         [HttpPost]
-        public IActionResult FilterAndSort(string sortBy, bool? directOnly, string departureTime, string arrivalTime)
+        public IActionResult FilterAndSort(string sortBy, bool? directOnly, string departureTime, string arrivalTime, int page = 1)
         {
             var searchCriteriaJson = HttpContext.Session.GetString("SearchCriteria");
             var allFlightsJson = HttpContext.Session.GetString("AllFlights");
@@ -156,11 +168,23 @@ namespace MoteurDeRechercheDeVol.Controllers
                 _ => filteredFlights
             };
 
+            var totalResults = filteredFlights.Count();
+            var pageSize = 10;
+            var totalPages = (int)Math.Ceiling((double)totalResults / pageSize);
+            page = Math.Max(1, Math.Min(page, totalPages > 0 ? totalPages : 1));
+            
+            var paginatedFlights = filteredFlights
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
             var resultsViewModel = new FlightResultsViewModel
             {
                 SearchCriteria = searchCriteria,
-                FlightOffers = filteredFlights.ToList(),
-                TotalResults = filteredFlights.Count(),
+                FlightOffers = paginatedFlights,
+                TotalResults = totalResults,
+                CurrentPage = page,
+                PageSize = pageSize,
                 AppliedFilters = new FilterOptions
                 {
                     SortBy = sortBy,
