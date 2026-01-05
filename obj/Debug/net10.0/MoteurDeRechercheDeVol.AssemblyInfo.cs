@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MoteurDeRechercheDeVol")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+06db85d17215baf4ce54904d8044915d3c0fd587")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+27e552b564d0e6e35ff5e95c66fc9b379da276bd")]
 [assembly: System.Reflection.AssemblyProductAttribute("MoteurDeRechercheDeVol")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MoteurDeRechercheDeVol")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
